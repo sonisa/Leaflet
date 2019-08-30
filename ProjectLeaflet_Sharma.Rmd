@@ -1,0 +1,115 @@
+---
+title: "Project_Map"
+author: "Sonisa Sharma"
+date: "August 28, 2019"
+output:
+  ioslides_presentation: default
+  slidy_presentation: default
+  beamer_presentation: default
+---
+## Introduction
+
+Leaflet is one of the most popular Javascript libraries for
+creating interactive maps. The leaflet R package allows you
+to create your own leaflet maps without needing to know any
+Javascript!
+
+
+*Get the Map of the world*
+
+
+```{r, eval=FALSE}
+library(leaflet)
+library(dplyr)
+my_map <- leaflet() %>% 
+  addTiles()
+my_map
+```
+
+
+## Adding Markers
+
+**Here is the coding using leaflet and the output map showing the hospital and its size in Kathmandu, Nepal**
+
+
+You can add markers to your map one at a time using the
+`addMarkers()` function by specifying the longitude and
+latitude. ([Here's](https://twitter.com/drob/status/719927537330040832)
+a tip if you tend to mix them up.) You can specify popup
+text for when you click on the marker with the `popup` 
+argument.
+
+```{r, eval=FALSE}
+library(leaflet)
+my_map <- my_map %>%
+  addMarkers(lat=27.69, lng=85.2897, 
+             popup="Hospital in Nepal")
+my_map
+```
+
+
+## Adding Many Markers
+
+Adding one marker at a time is often not practical if you
+want to display many markers. If you have a data frame with
+columns `lat` and `lng` you can pipe that data frame into
+`leaflet()` to add all the points at once.
+
+```{r, eval=FALSE}
+set.seed(2016-04-25)
+df <- data.frame(lat = runif(20, min = 27.71, max = 27.74),
+                 lng = runif(20, min = 85.28, max = 85.38))
+df %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers()
+```
+
+
+## Drawing Circles
+
+You can draw arbitrary shapes on the maps you create,
+including circles and squares. The code below draws a map
+where the circle on each city is proportional to the
+population of that city.
+
+```{r, eval=FALSE}
+md_hospital <- data.frame(name = c("Hosp1", "Hosp2", "Hosp3", "Hosp4","Hosp5", "Hosp6","Hosp7", "Hosp8"),
+                       pop = c(6194, 6616, 6233, 6104, 5523,
+                                3989, 3888, 3058),
+                        lat = c(27.693593,27.711681, 27.7525119,27.731705, 27.735186,27.734228,27.746302,27.749176),
+                        lng = c(85.289752, 85.290593,85.295979,85.326538,85.328524,85.346133,85.344040,85.345918))
+md_hospital %>%
+  leaflet() %>%
+  addTiles() %>%
+  addCircles(weight = 1, radius = sqrt(md_hospital$pop) * 10)
+```
+
+## Drawing Rectangles
+
+You can add rectangles on leaflet maps as well:
+
+```{r, eval=FALSE}
+leaflet() %>%
+  addTiles() %>%
+  addRectangles(lat1 = 27.711681, lng1 = 85.290993, 
+                lat2 =27.749176, lng2 = 85.345918)
+```
+
+## Adding Legends
+
+```{r, eval=FALSE}
+df <- data.frame(lat = runif(20, min = 27.71, max = 27.74),
+                 lng = runif(20, min = 85.28, max = 85.38),
+                 col = sample(c("red", "blue", "green"), 20, replace = TRUE),
+                 stringsAsFactors = FALSE)
+df%>%
+  leaflet()%>%
+  addTiles()%>%
+  addCircleMarkers(color = df$col) %>%
+  addLegend(labels = LETTERS[1:3], colors = c("blue", "red", "green"))
+```
+
+## Conclusion
+
+Thus, we were able to map the hopsital with the different size.
